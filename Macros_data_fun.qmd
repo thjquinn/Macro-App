@@ -1,0 +1,54 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+```{python}
+from scrape_nutrition import scrape_nutrition, RESTAURANTS
+df = scrape_nutrition(RESTAURANTS)
+df.to_csv("fast_food_nutrition.csv", index=False)
+```
+
+
+```{python}
+import pandas as pd
+data = pd.read_csv('fast_food_nutrition_updated.csv')
+max_carb_row = data.loc[data['Carbohydrates'].idxmax()]
+print(f"{max_carb_row['Menu Item']} from {max_carb_row['Restaurant']} has the most carbs: {max_carb_row['Carbohydrates']}")
+
+```
+
+
+```{python}
+max_protein_row = data.loc[data['Protein'].idxmax()]
+print(f"{max_protein_row['Menu Item']} from {max_protein_row['Restaurant']} has the most protein: {max_protein_row['Protein']}g, Calories: {max_protein_row['Calories']}")
+```
+
+
+```{python}
+filtered = data[data['Protein'] > 10]
+filtered = filtered[filtered['Calories'] > 0]
+filtered['Protein_per_Calorie'] = filtered['Protein'] / filtered['Calories']
+max_row = filtered.loc[filtered['Protein_per_Calorie'].idxmax()]
+print(f"{max_row['Menu Item']} from {max_row['Restaurant']} has the most protein per calorie: {max_row['Protein_per_Calorie']:.3f}g protein/calorie")
+```
+
+
+```{python}
+high_protein_low_cal = data[(data['Protein'] > 35) & (data['Calories'] < 300)]
+print(high_protein_low_cal[['Menu Item', 'Restaurant', 'Protein', 'Calories']])
+```
+
+
+```{python}
+import pandas as pd
+data = pd.read_csv('fast_food_nutrition_updated.csv')
+taco_bell_rows = data[data['Restaurant'].str.lower() == 'taco bell']
+print(taco_bell_rows)
+if not taco_bell_rows.empty:
+    max_protein_row = taco_bell_rows.loc[taco_bell_rows['Protein'].idxmax()]
+    print(f"Highest protein item at Taco Bell: {max_protein_row['Menu Item']} with {max_protein_row['Protein']}g protein")
+else:
+    print("No Taco Bell items found.")
+```
